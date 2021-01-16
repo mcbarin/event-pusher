@@ -11,6 +11,7 @@ services:
       - .:/app
       # One-way volume to use node_modules from inside image
       - /app/node_modules
+      - $GOOGLE_APPLICATION_CREDENTIALS:/tmp/keys/GoogleCloudCredentials-codewayassignment-206450ebe987.json:ro
     env_file:
-      - react-dev.env
+      - secret.env
     command: yarn dev
