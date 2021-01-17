@@ -1,12 +1,14 @@
-'use strict';
+'use strict'
 
-const express = require('express')
-const bodyParser = require('body-parser')
+import express from 'express'
+import bodyParser from 'body-parser'
 const cors = require('cors')
 const { log, ExpressAPILogMiddleware } = require('@rama41222/node-logger')
 
 const DataFlowManager = require('./google-cloud/dataFlow')
 const BigQueryManager = require('./google-cloud/bigQuery')
+
+const GOOGLE_CLOUD_PUB_SUB_TOPIC_NAME = process.env.GOOGLE_CLOUD_PUB_SUB_TOPIC_NAME
 
 
 const config = {
@@ -44,7 +46,7 @@ app.get('/', async (req, res) => {
 
 app.post('/event', (req, res) => {
     const message = req.body
-    const pubSubTopicName = process.env.GOOGLE_CLOUD_PUB_SUB_TOPIC_NAME
+    const pubSubTopicName = GOOGLE_CLOUD_PUB_SUB_TOPIC_NAME
 
     DataFlowManager.publishMessage(JSON.stringify(message), pubSubTopicName)
 
@@ -52,9 +54,6 @@ app.post('/event', (req, res) => {
     res.status(201).send(response)
 })
 
-app.listen(config.port, config.host, (e)=> {
-    if(e) {
-        throw new Error('Internal Server Error')
-    }
-    logger.info(`${config.name} running on ${config.host}:${config.port}`)
-})
+app.listen(config.port, config.host, () => {
+    console.log(`⚡️[server]: Server is running at https://${config.host}:${config.port}`);
+});
