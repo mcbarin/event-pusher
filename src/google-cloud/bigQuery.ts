@@ -1,14 +1,23 @@
-'use strict'
-
-const { BigQuery } = require('@google-cloud/bigquery');
+import { BigQuery } from '@google-cloud/bigquery'
 
 
 class BigQueryManager {
+    private static instance: BigQueryManager;
+    private bigQuery: BigQuery;
+
     constructor() {
         this.bigQuery = new BigQuery();
     }
 
-    queryForNumberOfDailyActiveUsers = async () => {
+    static getInstance(): BigQueryManager {
+        if (!BigQueryManager.instance) {
+            BigQueryManager.instance = new BigQueryManager();
+        }
+
+        return BigQueryManager.instance;
+    }
+
+    public async queryForNumberOfDailyActiveUsers () {
 
         const query = "\
             SELECT count(distinct user_id) as dailyActiveUsers FROM `codewayassignment.event_log.event_schema` \
@@ -25,7 +34,7 @@ class BigQueryManager {
         return rows[0].dailyActiveUsers
     }
 
-    queryForTotalUsers = async () => {
+    public async queryForNumberOfTotalUsers () {
 
         const query = "\
             SELECT count(distinct user_id) as totalUsers FROM `codewayassignment.event_log.event_schema`"
@@ -41,7 +50,7 @@ class BigQueryManager {
         return rows[0].totalUsers
     }
 
-    queryForAverageSessionDuration = async () => {
+    public async queryForAverageSessionDuration () {
 
         const query = "\
             with session_durations as ( \
@@ -64,4 +73,4 @@ class BigQueryManager {
     }
 }
 
-module.exports = new BigQueryManager()
+export = BigQueryManager

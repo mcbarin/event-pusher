@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - "3000:3000"
+    volumes:
+      - $GOOGLE_APPLICATION_CREDENTIALS:/tmp/keys/GoogleCloudCredentials-codewayassignment-206450ebe987.json:ro
+    env_file:
+      - secret.env
+    command: node build/server.js
+    networks:
+      - nginx_network
+  nginx:
+    image: nginx:1.16.0-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge

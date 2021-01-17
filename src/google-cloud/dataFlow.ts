@@ -1,14 +1,23 @@
-'use strict'
-
-const { PubSub } = require(`@google-cloud/pubsub`);
+import { PubSub } from '@google-cloud/pubsub'
 
 
 class DataFlowManager {
+    private static instance: DataFlowManager;
+    private pubSubClient: PubSub;
+
     constructor() {
         this.pubSubClient = new PubSub()
     }
 
-    publishMessage = async (message, pubSubTopicName) => {
+    static getInstance(): DataFlowManager {
+        if (!DataFlowManager.instance) {
+            DataFlowManager.instance = new DataFlowManager();
+        }
+
+        return DataFlowManager.instance;
+    }
+
+    public async publishMessage (message: string, pubSubTopicName: string) {
         const dataBuffer = Buffer.from(message)
 
         try {
@@ -22,4 +31,4 @@ class DataFlowManager {
     }
 }
 
-module.exports = new DataFlowManager()
+export = DataFlowManager
